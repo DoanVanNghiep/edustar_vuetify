@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-import CoursesView from "@/components/client_testForPayment/views/CoursesView.vue";
+import CourseList from "@/components/CourseList.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: CoursesView, // Gắn CoursesView vào Home
+    component: CourseList,
   },
 ];
 
