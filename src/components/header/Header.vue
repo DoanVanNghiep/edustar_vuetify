@@ -1,104 +1,91 @@
 <template>
-  <div class="mx-auto fixed-top z-50 w-100 bg-white shadow-sm">
-    <div
-      class="container d-flex justify-content-between align-items-center py-3"
-    >
-      <!-- Logo -->
-      <div
-        class="d-flex align-items-center cursor-pointer"
-        @click="redirectToHome"
+  <v-app-bar app>
+    <div class="relative flex items-center">
+      <img
+        src="/logoCamTrongSuot.png"
+        alt="EduStar Logo"
+        class="h-[4rem] phone:h-[3rem] tablet:h-[4.5rem] laptop:h-[5rem] desktop:h-[6rem] mr-2"
+      />
+      <h2
+        class="text-[#fb9400] text-4xl font-medium tablet:text-5xl laptop:text-6xl desktop:text-7xl"
       >
-        <img src="/logoCamTrongSuot.png" alt="Logo" class="w-10 h-10" />
-        <h2 class="ms-2 text-2xl font-weight-bold text-warning">EduStar</h2>
-      </div>
-
-      <!-- Menu Header
-      <MenuHeader /> -->
-
-      <!-- Dropdown Menu for smaller screens -->
-      <div class="d-lg-none">
-        <el-dropdown>
-          <span class="cursor-pointer">
-            <MenuOutlined />
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item @click="navigate('/')"
-                >TRANG CHỦ</el-dropdown-item
-              >
-              <el-dropdown-item>
-                <a
-                  :href="`https://mocktest.edustar.com.vn/?jwt=${jwt}&id=${id}`"
-                  target="_blank"
-                >
-                  THI THỬ
-                </a>
-              </el-dropdown-item>
-              <el-dropdown-item @click="navigate('/vstep')"
-                >Luyện thi VSTEP</el-dropdown-item
-              >
-              <el-dropdown-item @click="navigate('/toeic')"
-                >Luyện thi TOEIC</el-dropdown-item
-              >
-              <el-dropdown-item @click="navigate('/ielts')"
-                >Luyện thi IELTS</el-dropdown-item
-              >
-              <el-dropdown-item @click="navigate('/test-schedule')"
-                >LỊCH THI VSTEP</el-dropdown-item
-              >
-              <el-dropdown-item @click="navigate('/study-schedule')"
-                >LỊCH ÔN TẬP</el-dropdown-item
-              >
-              <el-dropdown-item @click="navigate('/new')"
-                >TIN TỨC</el-dropdown-item
-              >
-              <el-dropdown-item @click="showModalRegisterAcc"
-                >ĐĂNG KÝ TƯ VẤN</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
+        EduStar
+      </h2>
     </div>
-  </div>
+    <v-spacer></v-spacer>
+    <v-btn
+      text
+      :class="{ 'text--blue': active === 'home' }"
+      @click="navigate('home')"
+      >TRANG CHỦ</v-btn
+    >
+    <v-btn
+      text
+      :class="{ 'text--blue': active === 'exam' }"
+      @click="navigate('exam')"
+      >THI THỬ</v-btn
+    >
+    <v-btn
+      text
+      :class="{ 'text--blue': active === 'courses' }"
+      @click="navigate('courses')"
+      >KHÓA HỌC</v-btn
+    >
+    <v-btn
+      text
+      :class="{ 'text--blue': active === 'schedule' }"
+      @click="navigate('schedule')"
+      >LỊCH THI VSTEP</v-btn
+    >
+    <v-btn
+      text
+      :class="{ 'text--blue': active === 'news' }"
+      @click="navigate('news')"
+      >TIN TỨC</v-btn
+    >
+    <v-btn
+      text
+      :class="{ 'text--blue': active === 'consultation' }"
+      @click="navigate('consultation')"
+      >ĐĂNG KÍ TƯ VẤN</v-btn
+    >
+    <v-btn text>
+      <v-icon large color="gold">mdi-account-circle</v-icon>
+    </v-btn>
+  </v-app-bar>
 </template>
 
 <script>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-// import { MenuHeader } from "../menu/MenuHeder.vue";
-import { MenuOutlined } from "@ant-design/icons-vue";
-
 export default {
   name: "",
-  components: {
-    MenuOutlined,
-  },
-  setup() {
-    const router = useRouter();
-    const jwt = ref(null);
-    const id = ref(null);
-
-    const redirectToHome = () => {
-      router.push("/");
-    };
-
+  data() {
     return {
-      redirectToHome,
-      jwt,
-      id,
+      active: "home",
     };
+  },
+  methods: {
+    navigate(page) {
+      this.active = page;
+      console.log(`Navigating to: ${page}`);
+    },
   },
 };
 </script>
-
 <style scoped>
-/* Add any custom styles here */
-.cursor-pointer {
-  cursor: pointer;
+.logo-container {
+  display: flex;
+  align-items: center;
 }
 
-.text-warning {
-  color: #f79500;
+.logo-container img {
+  margin-right: 10px;
+}
+
+.edustar-text {
+  font-family: "Roboto", sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: orange;
+  letter-spacing: 1px;
 }
 </style>

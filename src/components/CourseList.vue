@@ -25,6 +25,14 @@
           <template v-slot:item.price="{ item }">
             <span>{{ formatPrice(item.price) }}</span>
           </template>
+
+          <!-- Nút Mua Khóa học -->
+          <template v-slot:item.action="{ item }">
+            <v-btn color="success" small @click="buyCourse(item)">
+              <v-icon left>mdi-cart</v-icon> Mua khóa học
+            </v-btn>
+          </template>
+
           <template v-slot:no-data>
             <v-alert type="info" border="left" dark>
               Không có dữ liệu khóa học để hiển thị.
@@ -48,20 +56,27 @@ export default {
         { text: "Tên Khóa học", value: "name" },
         { text: "Giá", value: "price" },
         { text: "Hình thức học", value: "learnOnlineOrOffline" },
+        { text: "Thao tác", value: "action", sortable: false }, // Thêm cột mới
       ],
     };
   },
   methods: {
     async refreshCourses() {
       try {
-        const data = await apiClient.readCourse(); // Lấy dữ liệu từ API
-        this.registeredCourse = data; // Gán dữ liệu vào biến
+        const data = await apiClient.readCourse();
+        this.registeredCourse = data;
       } catch (error) {
         console.error("Lỗi khi gọi API readCourse:", error);
       }
     },
     formatPrice(price) {
       return price ? `${price} VND` : "Chưa cập nhật";
+    },
+    buyCourse(course) {
+      this.$router.push({
+        name: "PaymentPage", // Định nghĩa tên route của trang thanh toán
+        params: { id: course.id }, // Truyền id của khóa học qua router
+      });
     },
   },
   mounted() {
