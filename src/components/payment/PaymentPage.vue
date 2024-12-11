@@ -2,53 +2,51 @@
   <v-container>
     <v-row>
       <!-- Thông tin người dùng -->
-      <v-col cols="12" md="6">
-        <v-card>
+      <v-col cols="12" md="4">
+        <v-card outlined class="pa-4 elevation-1">
           <v-card-title class="text-h6 font-weight-bold">
             Thông tin người dùng
           </v-card-title>
           <v-card-text>
-            <v-form ref="form" v-model="valid" lazy-validation>
+            <v-form ref="userForm" v-model="isUserFormValid">
+              <!-- Email -->
               <v-text-field
-                v-model="paymentInfo.email"
-                label="Địa chỉ email *"
-                :rules="[
-                  (v) => !!v || 'Email là bắt buộc',
-                  (v) => /.+@.+\..+/.test(v) || 'Email không hợp lệ',
-                ]"
+                v-model="user.email"
+                label="Địa chỉ email"
+                outlined
+                dense
                 required
+                :rules="[rules.required, rules.email]"
               ></v-text-field>
-              <v-checkbox
-                v-model="receiveFiles"
-                label="Bạn cần nhập địa chỉ email và xác nhận."
-              ></v-checkbox>
+
+              <!-- Họ và tên -->
               <v-text-field
-                v-model="paymentInfo.name"
-                label="Họ và tên *"
-                :rules="[(v) => !!v || 'Họ và tên là bắt buộc']"
+                v-model="user.name"
+                label="Họ và tên"
+                outlined
+                dense
                 required
+                :rules="[rules.required]"
               ></v-text-field>
+
+              <!-- Số điện thoại -->
               <v-text-field
-                v-model="paymentInfo.phone"
-                label="Số điện thoại *"
-                :rules="[
-                  (v) => !!v || 'Số điện thoại là bắt buộc',
-                  (v) => /^\d{10,11}$/.test(v) || 'Số điện thoại không hợp lệ',
-                ]"
+                v-model="user.phone"
+                label="Số điện thoại"
+                outlined
+                dense
+                type="tel"
                 required
+                :rules="[rules.required, rules.phone]"
               ></v-text-field>
+
+              <!-- Địa chỉ -->
               <v-text-field
-                v-model="paymentInfo.address"
-                label="Địa chỉ *"
-                :rules="[(v) => !!v || 'Địa chỉ là bắt buộc']"
-                required
-              ></v-text-field>
-              <v-text-field
-                v-model="paymentInfo.confirmPassword"
-                label="Mật khẩu để xác nhận *"
-                type="password"
-                :rules="[(v) => !!v || 'Mật khẩu là bắt buộc']"
-                required
+                v-model="user.address"
+                label="Địa chỉ"
+                outlined
+                dense
+                :rules="[rules.required]"
               ></v-text-field>
             </v-form>
           </v-card-text>
@@ -56,75 +54,104 @@
       </v-col>
 
       <!-- Tóm tắt đơn hàng -->
-      <v-col cols="12" md="6">
-        <v-card>
-          <v-card-title class="text-h6 font-weight-bold">
-            Tóm tắt đơn hàng
-          </v-card-title>
-          <v-card-text v-if="course">
-            <div class="d-flex align-center mb-3">
-              <v-img
-                src="https://via.placeholder.com/100"
-                max-width="100"
-                max-height="100"
-                class="mr-4"
-              ></v-img>
-              <div>
-                <h3 class="text-subtitle-1 font-weight-bold">
-                  {{ course.name }}
-                </h3>
-                <p class="mb-1">
-                  <strong>Giá tiền:</strong> {{ formatPrice(course.price) }}
-                </p>
-                <p class="mb-1">
-                  <strong>Giảng viên:</strong> {{ course.teacher }}
-                </p>
-                <p class="mb-1">
-                  <strong>Số điện thoại:</strong> {{ course.teacherPhone }}
-                </p>
-                <p class="mb-1">
-                  <strong>Ngày thi:</strong> {{ course.examDate }}
-                </p>
-              </div>
+      <v-col cols="12" md="4">
+        <v-card outlined class="pa-4 elevation-1">
+          <v-card-title class="text-h6 font-weight-bold"
+            >Tóm tắt đơn hàng</v-card-title
+          >
+          <v-card-text>
+            <div class="mb-2">
+              <strong>Tên khóa học:</strong>
+              {{ course.name || "Chưa có thông tin" }}
             </div>
-            <v-divider class="my-3"></v-divider>
-            <div>
-              <p><strong>Phương thức thanh toán:</strong></p>
-              <v-radio-group v-model="paymentMethod">
-                <v-radio label="Thanh toán trực tiếp" value="offline"></v-radio>
-                <v-radio label="Thanh toán online" value="online"></v-radio>
-              </v-radio-group>
+            <div class="mb-2">
+              <strong>Giá tiền:</strong>
+              <span class="text-primary">{{
+                course.price ? course.price + " " : "Chưa có thông tin"
+              }}</span>
             </div>
-          </v-card-text>
-          <v-card-text v-else>
-            <v-alert type="info">Đang tải thông tin khóa học...</v-alert>
+            <div class="mb-2">
+              <strong>Lịch trình:</strong>
+              {{ course.schedule || "Chưa có thông tin" }}
+            </div>
+            <div class="mb-2">
+              <strong>Số buổi học:</strong>
+              {{ course.numberTeachingSessions || "Chưa có thông tin" }}
+            </div>
+            <div class="mb-2">
+              <strong>Yêu cầu học viên:</strong>
+              {{ course.requestStudents || "Chưa có thông tin" }}
+            </div>
           </v-card-text>
         </v-card>
 
-        <!-- Thanh toán -->
-        <v-card class="mt-4">
+        <!-- Phương thức thanh toán -->
+        <v-card outlined class="mt-4 pa-4 elevation-1">
+          <v-card-title class="text-h6 font-weight-bold"
+            >Phương thức thanh toán</v-card-title
+          >
           <v-card-text>
-            <p class="text-danger text-caption mb-3">
-              - Khi bạn đã mua khóa học yêu cầu không chia sẻ tài liệu. Đây là
-              đặc quyền của người mua.<br />
-              - Người dùng nếu thanh toán trực tiếp hãy đến địa chỉ thanh toán
-              để gặp nhân viên.
-            </p>
-            <v-divider></v-divider>
-            <div class="d-flex justify-space-between align-center mt-3">
-              <p><strong>Số lượng:</strong> 1</p>
-              <p><strong>Tổng tiền:</strong> {{ formatPrice(course.price) }}</p>
-            </div>
+            <!-- Radio buttons -->
+            <form>
+              <div>
+                <input
+                  type="radio"
+                  id="payment-direct"
+                  name="paymentMethod"
+                  value="direct"
+                  v-model="paymentMethod"
+                />
+                <label for="payment-direct">Thanh toán trực tiếp</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  id="payment-online"
+                  name="paymentMethod"
+                  value="online"
+                  v-model="paymentMethod"
+                />
+                <label for="payment-online">Thanh toán online</label>
+              </div>
+            </form>
+
+            <!-- Hiển thị URL dựa trên phương thức thanh toán -->
+            <div v-if="paymentMethod === 'direct'" class="mt-4"></div>
+            <div v-if="paymentMethod === 'online'" class="mt-4"></div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <!-- Thanh toán -->
+      <v-col cols="12" md="4">
+        <v-card outlined class="pa-4 elevation-2">
+          <v-card-title class="text-h6 font-weight-bold"
+            >Thanh toán</v-card-title
+          >
+          <v-card-text>
+            <v-alert type="warning" border="left" elevation="0">
+              Khi bạn đã mua khóa học, vui lòng không chia sẻ tài khoản.
+            </v-alert>
+            <v-row>
+              <v-col cols="6" class="font-weight-medium">Số lượng:</v-col>
+              <v-col cols="6" class="text-right font-weight-medium">1</v-col>
+              <v-col cols="6" class="font-weight-medium">Tổng tiền:</v-col>
+              <v-col cols="6" class="text-right text-primary font-weight-bold">
+                {{ course.price }}
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-actions>
             <v-btn
+              :disabled="!isUserFormValid"
               color="primary"
               block
-              class="mt-3"
-              :disabled="!valid"
-              @click="submitPayment"
+              large
+              @click="processPayment"
             >
-              Thanh Toán
+              THANH TOÁN
             </v-btn>
-          </v-card-text>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -132,51 +159,88 @@
 </template>
 
 <script>
-import axios from "axios";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import PaymentService from "@/services/PaymentService";
 
 export default {
-  name: "PaymentPage",
-  data() {
-    return {
-      course: null, // Chứa thông tin khóa học
-      paymentInfo: {
-        email: "",
-        name: "",
-        phone: "",
-        address: "",
-        confirmPassword: "",
-      },
-      receiveFiles: false,
-      paymentMethod: "offline",
-      valid: false,
+  setup() {
+    const route = useRoute();
+    const course = ref({});
+    const user = ref({
+      email: "",
+      receiveEmail: false,
+      name: "",
+      phone: "",
+      address: "",
+    });
+    const paymentMethod = ref("direct");
+    const isUserFormValid = ref(false);
+
+    const rules = {
+      required: (value) => !!value || "Trường này là bắt buộc.",
+      email: (value) => /.+@.+\..+/.test(value) || "Email không hợp lệ.",
+      phone: (value) =>
+        /^\d{10,11}$/.test(value) || "Số điện thoại không hợp lệ.",
     };
-  },
-  methods: {
-    formatPrice(price) {
-      return `${price.toLocaleString()} VND`;
-    },
-    async fetchCourse() {
-      const id = this.$route.params.id; // Lấy id từ params
-      try {
-        const response = await axios.get(`http://localhost:8080/service/${id}`);
-        this.course = response.data.data; // Gán dữ liệu khóa học vào biến
-      } catch (error) {
-        console.error("Lỗi khi lấy thông tin khóa học:", error);
+
+    const fetchCourseDetails = () => {
+      PaymentService.getCourseForPayment(route.params.id)
+        .then((res) => {
+          if (res.data && res.data.success) {
+            course.value = res.data.data; // Lấy thông tin khóa học từ API
+          } else {
+            console.error("Dữ liệu không hợp lệ:", res.data);
+          }
+        })
+        .catch((error) => {
+          console.error("Lỗi khi lấy dữ liệu khóa học:", error);
+        });
+    };
+
+    const processPayment = () => {
+      if (paymentMethod.value === "direct") {
+        window.open("https://example.com/direct-payment", "_blank");
+        alert(
+          "Bạn đã chọn thanh toán trực tiếp. Vui lòng xem chi tiết ở liên kết."
+        );
+      } else if (paymentMethod.value === "online") {
+        window.open("https://example.com/online-payment", "_blank");
+        alert("Bạn đã chọn thanh toán online. Liên kết thanh toán đã được mở.");
       }
-    },
-    submitPayment() {
-      console.log("Thông tin thanh toán:", this.paymentInfo);
-      alert("Thanh toán thành công! Cảm ơn bạn.");
-    },
-  },
-  created() {
-    this.fetchCourse(); // Lấy thông tin khóa học khi component được tạo
+    };
+
+    onMounted(() => {
+      fetchCourseDetails();
+    });
+
+    return {
+      course,
+      user,
+      paymentMethod,
+      isUserFormValid,
+      rules,
+      processPayment,
+    };
   },
 };
 </script>
 
 <style scoped>
-.text-danger {
-  color: #ff0000;
+.v-container {
+  padding: 24px;
+}
+.v-card {
+  border-radius: 8px;
+}
+.v-card-title {
+  margin-bottom: 8px;
+}
+.v-alert {
+  background-color: #ffe08a !important;
+  color: #5a4e3d !important;
+}
+.text-primary {
+  color: #1976d2 !important;
 }
 </style>

@@ -23,7 +23,7 @@
           </template>
 
           <template v-slot:item.price="{ item }">
-            <span>{{ formatPrice(item.price) }}</span>
+            <span>{{ item.price }}</span>
           </template>
 
           <!-- Nút Mua Khóa học -->
@@ -58,6 +58,7 @@ export default {
         { text: "Hình thức học", value: "learnOnlineOrOffline" },
         { text: "Thao tác", value: "action", sortable: false }, // Thêm cột mới
       ],
+      loadingCourseId: null, // Trạng thái loading cho từng khóa học
     };
   },
   methods: {
@@ -67,16 +68,17 @@ export default {
         this.registeredCourse = data;
       } catch (error) {
         console.error("Lỗi khi gọi API readCourse:", error);
+        // Không cần thông báo lỗi cho người dùng, chỉ log vào console
       }
     },
+
     formatPrice(price) {
       return price ? `${price} VND` : "Chưa cập nhật";
     },
-    buyCourse(course) {
-      this.$router.push({
-        name: "PaymentPage", // Định nghĩa tên route của trang thanh toán
-        params: { id: course.id }, // Truyền id của khóa học qua router
-      });
+
+    async buyCourse(course) {
+      // Điều hướng đến URL cụ thể
+      window.location.href = `/payment/${course.id}`;
     },
   },
   mounted() {

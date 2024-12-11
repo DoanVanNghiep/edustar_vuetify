@@ -7,7 +7,7 @@ import "vuetify/styles";
 // Axios Config
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:8080/service";
+axios.defaults.baseURL = "http://localhost:8080/";
 
 const vuetify = createVuetify();
 
